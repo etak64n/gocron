@@ -156,7 +156,7 @@ The same rules hold for every change of a zone's UTC offset, including changes a
 
 The tests check the times of gocron against times worked out in other ways:
 
-- **Clock changes**: around every clock change of 2026 in 11 zones with unusual changes, the times of 14 expressions match times worked out by brute force from the readings of the clock, in both directions. With `GOCRON_ALL_ZONES=1`, 8 of the expressions go through the same comparison around every change from 1900 to 2040 in every zone of the system's time zone database, about 23,000 changes in 341 zones on macOS. CI runs it on Linux.
+- **Clock changes**: around every clock change of 2026 in 11 zones with unusual changes, the times of 14 expressions match times worked out by brute force from the readings of the clock, in both directions. With `GOCRON_ALL_ZONES=1`, 8 of the expressions go through the same comparison around every change from 1900 to 2040 in every zone of the system's time zone database. CI runs it on Linux, where it covers about 27,000 changes in 447 zones.
 - **Days**: from 2000 to 2100, the days on which expressions with `L`, `W`, `#` and both day fields fire match days worked out from the definitions, one date at a time.
 - **Fuzzing**: for any input, parsing does not panic, and `Next` and `Prev` agree with each other. CI fuzzes for 30 seconds on every push.
 
