@@ -39,6 +39,14 @@ jobs:
         if: runner.os == 'Linux'
         run: go test -race ./...
 
+      - name: Fuzz
+        if: runner.os == 'Linux'
+        run: go test -run '^$' -fuzz FuzzSchedule -fuzztime 30s .
+
+      - name: Benchmarks
+        if: runner.os == 'Linux'
+        run: go test -run '^$' -bench . -benchtime 100x .
+
   # go.mod promises that Go 1.22 builds gocron.
   minimum-go:
     runs-on: ubuntu-latest
@@ -51,3 +59,20 @@ jobs:
 
       - name: Test
         run: go test ./...
+
+  # Compares the times around every clock change from 1900 to 2040 in every
+  # zone of the system's time zone database with a brute-force count.
+  all-zones:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+          check-latest: true
+
+      - name: Test every zone
+        env:
+          GOCRON_ALL_ZONES: "1"
+        run: go test -run TestAllZones -v -timeout 30m .

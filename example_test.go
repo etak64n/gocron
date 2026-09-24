@@ -66,3 +66,34 @@ func Example_daylightSaving() {
 	// Nov 1 01:30 EDT
 	// Nov 2 01:30 EST
 }
+
+func ExampleSchedule_Prev() {
+	s := gocron.MustParse("CRON_TZ=UTC 0 0 L * *")
+	t := time.Date(2026, 9, 24, 12, 0, 0, 0, time.UTC)
+	fmt.Println("last:", s.Prev(t).Format("Jan 2"))
+	fmt.Println("next:", s.Next(t).Format("Jan 2"))
+	// Output:
+	// last: Aug 31
+	// next: Sep 30
+}
+
+// The day fields take terms for days that move within the month.
+func Example_movingDays() {
+	from := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
+	for _, spec := range []string{
+		"0 0 L * *",   // the last day of the month
+		"0 0 LW * *",  // the last weekday of the month
+		"0 0 1W * *",  // the weekday nearest to the 1st
+		"0 0 * * 5L",  // the last Friday of the month
+		"0 0 * * 1#2", // the second Monday of the month
+	} {
+		s := gocron.MustParse("CRON_TZ=UTC " + spec)
+		fmt.Println(spec, "=>", s.Next(from).Format("Mon Jan 2"))
+	}
+	// Output:
+	// 0 0 L * * => Sat Oct 31
+	// 0 0 LW * * => Fri Oct 30
+	// 0 0 1W * * => Mon Nov 2
+	// 0 0 * * 5L => Fri Oct 30
+	// 0 0 * * 1#2 => Mon Oct 12
+}
